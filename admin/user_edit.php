@@ -13,38 +13,49 @@ $ustat = $pdo->prepare("SELECT * FROM users WHERE id=$id");
 $ustat->execute();
 $uresult = $ustat->fetch(PDO::FETCH_ASSOC);
 if ($_POST) {
-    if (empty($_POST['name'] || empty($_POST['email']))) {
+    if (empty($_POST['name']) || empty($_POST['email']) || empty($_POST['address']) || empty($_POST['phone'])) {
         if (empty($_POST['name'])) {
             $nameError = 'Name cannot be empty!';
         }
         if (empty($_POST['email'])) {
             $emailError = 'Email cannot be empty!';
         }
-    } elseif (!empty($_POST['password']) && strlen($_POST['password']) < 4) {
-        $passwordError = 'Password should be at least 4 characters!';
-    } else {
+        if(empty($_POST['phone'])){
+			$phoneError = "Phone cannot be empty!";
+		}	
+		if(empty($_POST['address'])){
+			$addressError = "Address cannot be empty!";
+		}
+    }else {
         $name = $_POST['name'];
         $email = $_POST['email'];
+        $address = $_POST['address'];
+        $phone = $_POST['phone'];
         $role = $_POST['role'];
-
-        $stat = $pdo->prepare("SELECT * FROM users WHERE email=:email AND id!=:id");
-        $stat->execute(array(":email" => $email, ":id" => $id));
-        $user = $stat->fetch(PDO::FETCH_ASSOC);
-        if ($user) {
-            echo "<script>alert('Email has already used!')</script>";
-        } else {
-            if ($_POST['password']) {
-                $password = password_hash($_POST['password'],PASSWORD_DEFAULT);
-                $stat = $pdo->prepare("UPDATE users SET name='$name',email='$email',password='$password',role='$role' WHERE id='$id'");
-                $result = $stat->execute();
+        
+        if(!empty($_POST['password']) && strlen($_POST['password']) < 4){
+            $passwordError = "Passwords should not be less than 4 characters!";
+        }else{
+            $stat = $pdo->prepare("SELECT * FROM users WHERE email=:email AND id!=:id");
+            $stat->execute(array(":email" => $email, ":id" => $id));
+            $user = $stat->fetch(PDO::FETCH_ASSOC);
+            if ($user) {
+                echo "<script>alert('Email has already used!')</script>";
             } else {
-                $stat = $pdo->prepare("UPDATE users SET name='$name',email='$email',role='$role' WHERE id='$id'");
-                $result = $stat->execute();
-            }
-            if ($result) {
-                echo "<script>alert('User is updated successfully.');window.location.href='users.php'</script>";
+                if ($_POST['password']) {
+                    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+                    $stat = $pdo->prepare("UPDATE users SET name='$name',email='$email',address='$address',phone='$phone',password='$password',role='$role' WHERE id='$id'");
+                    $result = $stat->execute();
+                } else {
+                    $stat = $pdo->prepare("UPDATE users SET name='$name',email='$email',address='$address',phone='$phone',role='$role' WHERE id='$id'");
+                    $result = $stat->execute();
+                }
+                if ($result) {
+                    echo "<script>alert('User is updated successfully.');window.location.href='users.php'</script>";
+                }
             }
         }
+        
     }
 }
 ?>
@@ -64,18 +75,24 @@ if ($_POST) {
                             <input type="hidden" name="id" value="<?php echo escape($uresult['id']) ?>">
                             <div class="form-group">
                                 <label for="" class="form-label">Name</label>
-                                <p class="text-danger"><?php echo empty($nameError) ?  '' : $nameError; ?></p>
-                                <input type="text" name="name" class="form-control" value="<?php echo escape($uresult['name']) ?>">
+                                <input type="text" name="name" style="<?php echo empty($nameError) ? '' : 'border: 1px solid red;' ?>" class="form-control" value="<?php echo escape($uresult['name']) ?>">
                             </div>
                             <div class="form-group">
                                 <label for="" class="form-label">Email</label>
-                                <p class="text-danger"><?php echo empty($emailError) ?  '' : $emailError; ?></p>
-                                <input type="email" class="form-control" name="email" value="<?php echo escape($uresult['email']) ?>">
+                                <input type="email"  class="form-control" name="email" style="<?php echo empty($emailError) ? '' : 'border: 1px solid red;' ?>"  value="<?php echo escape($uresult['email']) ?>">
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="form-label">Phone</label>
+                                <input type="number" value="<?php echo escape($uresult['phone']) ?>" style="<?php echo empty($phoneError) ? '' : 'border: 1px solid red;' ?>" class="form-control" id="name" name="phone" placeholder="Phone" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Phone'">
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="form-label">Address</label>
+                                <input type="text" class="form-control" value="<?php echo escape($uresult['address']) ?>" style="<?php echo empty($addressError) ? '' : 'border: 1px solid red;' ?>" id="name" name="address" placeholder="Address" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Address'">
                             </div>
                             <div class="form-group">
                                 <label for="" class="form-label">Password</label>
                                 <p class="text-danger"><?php echo empty($passwordError) ?  '' : $passwordError; ?></p>
-                                <input type="password" class="form-control" name="password">
+                                <input type="password" class="form-control" name="password" style="<?php echo empty($passwordError) ? '' : 'border: 1px solid red;' ?>" >
                             </div>
                             <div class="form-group">
                                 <label for="" class="form-label">Role</label>

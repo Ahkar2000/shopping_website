@@ -31,7 +31,7 @@ if (isset($_POST['search'])) {
           </div>
           <?php
           //pagination start
-          if ($_GET) {
+          if (!empty($_GET)) {
             $pageno = $_GET['pageno'];
           } else {
             $pageno = 1;

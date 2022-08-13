@@ -8,22 +8,37 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
 if ($_SESSION['role'] != 1) {
   header("location:login.php");
 }
-if ($_POST) {
-  if (empty($_POST['name'] || empty($_POST['email'])) || empty($_POST['password'])) {
-    if (empty($_POST['name'])) {
-      $nameError = 'Name cannot be empty!';
-    }
-    if (empty($_POST['email'])) {
-      $emailError = 'Email cannot be empty!';
-    }
-    if (empty($_POST['password'])) {
-      $passwordError = 'Password cannot be empty!';
-    }
+if($_POST){
+	if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['address']) || empty($_POST['phone'])
+		|| empty($_POST['password']) || strlen($_POST['password']) <4 || $_POST['cpassword'] != $_POST['password']){
+		if(empty($_POST['name'])){
+			$nameError = "Name cannot be empty!";
+		}	
+		if(empty($_POST['email'])){
+			$emailError = "Email cannot be empty!";
+		}	
+		if(empty($_POST['phone'])){
+			$phoneError = "Phone cannot be empty!";
+		}	
+		if(empty($_POST['address'])){
+			$addressError = "Address cannot be empty!";
+		}
+		if(empty($_POST['password'])){
+			$passwordError = "Password is required!";
+		}
+		if(strlen($_POST['password']) <4){
+			$passwordError = "Password cannot be less than 4 characters!";
+		}
+    if($_POST['cpassword'] != $_POST['password']){
+			$cpasswordError = "Passwords do not match!";
+		}
   } elseif (!empty($_POST['password']) && strlen($_POST['password']) < 4) {
     $passwordError = 'Password should be at least 4 characters!';
   } else {
     $name = $_POST['name'];
     $email = $_POST['email'];
+    $address = $_POST['address'];
+    $phone = $_POST['phone'];
     $password = password_hash($_POST['password'],PASSWORD_DEFAULT);
     if (empty($_POST['role'])) {
       $role = 0;
@@ -39,12 +54,14 @@ if ($_POST) {
     if ($user) {
       echo "<script>alert('Email has already used!')</script>";
     } else {
-      $stat = $pdo->prepare("INSERT INTO users(name,email,password,role) VALUES (:name,:email,:password,:role)");
+      $stat = $pdo->prepare("INSERT INTO users(name,email,password,address,phone,role) VALUES (:name,:email,:password,:address,:phone,:role)");
       $result = $stat->execute(
         array(
           ':name' => $name,
           ':email' => $email,
           ':password' => $password,
+          ':address' => $address,
+          ':phone' => $phone,
           ':role' => $role
         ),
       );
@@ -67,22 +84,33 @@ if ($_POST) {
         <div class="card">
           <div class="card-body">
             <form action="user_add.php" method="post">
-              <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
-              <div class="form-group">
+            <input type="hidden" name="token" value="<?php echo $_SESSION['token'] ?>">
+							<div class="form-group">
                 <label for="" class="form-label">Name</label>
-                <p class="text-danger"><?php echo empty($nameError) ?  '' : $nameError; ?></p>
-                <input type="text" name="name" class="form-control" id="">
-              </div>
+								<input type="text" style="<?php echo empty($nameError) ? '':'border: 1px solid red;'?>" class="form-control" id="name" name="name" placeholder="Name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Name'">
+							</div>
+							<div class="form-group">
+              <label for="" class="form-label">Email</label>
+								<input type="email" style="<?php echo empty($emailError) ? '':'border: 1px solid red;'?>" class="form-control" id="name" name="email" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'">
+							</div>
+							<div class="form-group">
+              <label for="" class="form-label">Phone</label>
+								<input type="number" style="<?php echo empty($phoneError) ? '':'border: 1px solid red;'?>" class="form-control" id="name" name="phone" placeholder="Phone" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Phone'">
+							</div>
+							<div class="form-group">
+              <label for="" class="form-label">Address</label>
+								<input type="text" class="form-control" style="<?php echo empty($addressError) ? '':'border: 1px solid red;'?>" id="name" name="address" placeholder="Address" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Address'">
+							</div>
+							<div class="form-group">
+              <label for="" class="form-label">Password</label>
+								<input type="password" class="form-control" style="<?php echo empty($passwordError) ? '':'border: 1px solid red;'?>" id="name" name="password" placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
+								<p class="text-danger mb-0 text-left"><?php echo empty($passwordError) ? '' : $passwordError ?></p>
+							</div>
               <div class="form-group">
-                <label for="" class="form-label">Email</label>
-                <p class="text-danger"><?php echo empty($emailError) ?  '' : $emailError; ?></p>
-                <input type="email" class="form-control" name="email" id="">
-              </div>
-              <div class="form-group">
-                <label for="" class="form-label">Password</label>
-                <p class="text-danger"><?php echo empty($passwordError) ?  '' : $passwordError; ?></p>
-                <input type="password" class="form-control" name="password" id="">
-              </div>
+                <label for="" class="form-label">Confirm Password</label>
+								<input type="password" class="form-control" style="<?php echo empty($cpasswordError) ? '':'border: 1px solid red;'?>" id="name" name="cpassword" placeholder="Confirm Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Confirm Password'">
+								<p class="text-danger text-left mb-0"><?php echo empty($cpasswordError) ? '' : $cpasswordError ?></p>
+							</div>
               <div class="form-group">
                 <label for="" class="form-label">Role</label>
                 <select name="role" id="" class="form-control">
