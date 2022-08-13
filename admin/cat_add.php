@@ -51,7 +51,7 @@ if ($_POST) {
               <div class="form-group">
                 <label for="" class="form-label">Description</label>
                 <p class="text-danger"><?php echo empty($descError) ?  '': $descError; ?></p>
-                <textarea name="description" rows="10" class="form-control"></textarea>
+                <textarea name="description" rows="5" class="form-control"></textarea>
               </div>
               <div class="form-group">
                 <input type="submit" class="btn btn-success" name="" value="SUBMIT" id="">

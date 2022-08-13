@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,27 +26,24 @@
         </li>
         <li>
           <?php
-            $link = $_SERVER['PHP_SELF'];
-            $link_array = explode('/',$link);
-            $page = end($link_array);
+          $link = $_SERVER['PHP_SELF'];
+          $link_array = explode('/', $link);
+          $page = end($link_array);
           ?>
-          <form method="post"
-          <?php if($page == 'index.php') :?>
-            action="index.php"
-          <?php elseif($page == 'categories.php') :?>
-            action="categories.php"
-          <?php elseif($page == 'users.php') : ?>
-            action="users.php"
-          <?php endif ?>
-          >
-          <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
-            <div class="d-flex">
-              <input type="search" name="search" class="form-control mr-2" id="" placeholder="Search">
-              <button class="btn btn-default">
-                <i class="fas fa-search fa-fw"></i>
-              </button>
-            </div>
-          </form>
+          <?php
+          $sites = ['index.php','categories.php','orders.php','users.php'];
+          if (in_array($page,$sites)) { ?>
+            <form method="post" <?php foreach($sites as $site){if($page == $site){echo "action='$site'";}}?>>
+              <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
+              <div class="d-flex">
+                <input type="search" name="search" class="form-control mr-2" id="" placeholder="Search">
+                <button class="btn btn-default">
+                  <i class="fas fa-search fa-fw"></i>
+                </button>
+              </div>
+            </form>
+          <?php  }
+          ?>
 
         </li>
       </ul>
@@ -100,6 +98,14 @@
                 <i class="nav-icon fas fa-users"></i>
                 <p>
                   Users
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="orders.php" class="nav-link <?php echo $page == 'orders.php' ? 'active' : '' ?>">
+                <i class="nav-icon fas fa-table"></i>
+                <p>
+                  Orders
                 </p>
               </a>
             </li>

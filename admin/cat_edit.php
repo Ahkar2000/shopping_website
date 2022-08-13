@@ -59,7 +59,7 @@ $result = $stat->fetch(PDO::FETCH_ASSOC);
               <div class="form-group">
                 <label for="" class="form-label">Description</label>
                 <p class="text-danger"><?php echo empty($descError) ?  '': $descError; ?></p>
-                <textarea name="description" rows="10" class="form-control"><?php echo escape($result['description']) ?></textarea>
+                <textarea name="description" rows="5" class="form-control"><?php echo escape($result['description']) ?></textarea>
               </div>
               <div class="form-group">
                 <input type="submit" class="btn btn-success" name="" value="SUBMIT" id="">
