@@ -41,45 +41,55 @@ if ($_POST) {
             $catError = "Category is required!";
         }
     } else { //validation success
-        $file = "images/".$_FILES['image']['name'];
-        $imageType = pathinfo($file, PATHINFO_EXTENSION);
-        $name = $_POST['name'];
-        $description = $_POST['description'];
-        $category = $_POST['category'];
-        $quantity = $_POST['quantity'];
-        $price = $_POST['price'];
-        $image = uniqid()."-".$_FILES['image']['name'];
+        if (is_numeric($_POST['quantity']) != 1) {
+            $qtyError = "Quantity should be Integer!";
+        }
+        if (is_numeric($_POST['price']) != 1) {
+            $priceError = "Price should be Integer!";
+        }
+        if ($qtyError == '' && $priceError == '') {
+            $file = "images/" . $_FILES['image']['name'];
+            $imageType = pathinfo($file, PATHINFO_EXTENSION);
+            $file = "images/" . $_FILES['image']['name'];
+            $imageType = pathinfo($file, PATHINFO_EXTENSION);
+            $name = $_POST['name'];
+            $description = $_POST['description'];
+            $category = $_POST['category'];
+            $quantity = $_POST['quantity'];
+            $price = $_POST['price'];
+            $image = uniqid() . "-" . $_FILES['image']['name'];
 
-        if ($image) {
-            if ($imageType != 'jpg' && $imageType != 'jpeg' && $imageType != 'png') {
-                $imageError = "Image Type is incorrect!";
-                $result = false;
+            if ($image) {
+                if ($imageType != 'jpg' && $imageType != 'jpeg' && $imageType != 'png') {
+                    $imageError = "Image Type is incorrect!";
+                    $result = false;
+                } else {
+                    move_uploaded_file($_FILES['image']['tmp_name'], "images/" . $image);
+                    $stat = $pdo->prepare("UPDATE products SET name=:name,description=:description,category_id=:category_id,price=:price,quantity=:quantity,image=:image WHERE id=:id");
+                    $result = $stat->execute(array(
+                        ':name' => $name,
+                        ':description' => $description,
+                        ':category_id' => $category,
+                        ':quantity' => $quantity,
+                        ':price' => $price,
+                        ':image' => $image,
+                        ':id' => $id
+                    ));
+                }
             } else {
-                move_uploaded_file($_FILES['image']['tmp_name'], "images/".$image);
-                $stat = $pdo->prepare("UPDATE products SET name=:name,description=:description,category_id=:category_id,price=:price,quantity=:quantity,image=:image WHERE id=:id");
+                $stat = $pdo->prepare("UPDATE products SET name=:name,description=:description,category_id=:category_id,price=:price,quantity=:quantity WHERE id=:id");
                 $result = $stat->execute(array(
                     ':name' => $name,
                     ':description' => $description,
                     ':category_id' => $category,
                     ':quantity' => $quantity,
                     ':price' => $price,
-                    ':image' => $image,
                     ':id' => $id
                 ));
             }
-        } else {
-            $stat = $pdo->prepare("UPDATE products SET name=:name,description=:description,category_id=:category_id,price=:price,quantity=:quantity WHERE id=:id");
-            $result = $stat->execute(array(
-                ':name' => $name,
-                ':description' => $description,
-                ':category_id' => $category,
-                ':quantity' => $quantity,
-                ':price' => $price,
-                ':id' => $id
-            ));
-        }
-        if ($result) {
-            echo "<script>alert('Product is updated.');location.href='index.php'</script>";
+            if ($result) {
+                echo "<script>alert('Product is updated.');location.href='index.php'</script>";
+            }
         }
     }
 }

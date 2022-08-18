@@ -80,7 +80,7 @@ if ($_SESSION['role'] != 1) {
                         <nav aria-label="..." class="float-right mt-3">
                             <ul class="pagination">
                                 <li class="page-item">
-                                    <a class="page-link" href="?pageno=1">First</a>
+                                    <a class="page-link" href="?id=<?php echo escape($_GET['id'])?>&pageno=1">First</a>
                                 </li>
                                 <li class="page-item <?php if ($pageno <= 1) {
                                                             echo 'disabled';
@@ -88,7 +88,7 @@ if ($_SESSION['role'] != 1) {
                                     <a class="page-link" href="<?php if ($pageno <= 1) {
                                                                     echo '#';
                                                                 } else {
-                                                                    echo "?pageno=" . ($pageno - 1);
+                                                                    echo "?id=".$_GET['id']."&pageno=" . ($pageno - 1);
                                                                 } ?>">Previous</a>
                                 </li>
                                 <li class="page-item active" aria-current="page">
@@ -100,11 +100,11 @@ if ($_SESSION['role'] != 1) {
                                     <a class="page-link" href="<?php if ($pageno >= $total_pages) {
                                                                     echo '#';
                                                                 } else {
-                                                                    echo "?pageno=" . ($pageno + 1);
+                                                                    echo "?id=".$_GET['id']."&pageno=" . ($pageno + 1);
                                                                 } ?>">Next</a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="?pageno=<?php echo $total_pages ?>">Last</a>
+                                    <a class="page-link" href="?id=<?php echo escape($_GET['id'])?>&pageno=<?php echo $total_pages ?>">Last</a>
                                 </li>
                             </ul>
                         </nav>

@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap4.min.css">
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -31,9 +33,13 @@
           $page = end($link_array);
           ?>
           <?php
-          $sites = ['index.php','categories.php','orders.php','users.php'];
-          if (in_array($page,$sites)) { ?>
-            <form method="post" <?php foreach($sites as $site){if($page == $site){echo "action='$site'";}}?>>
+          $sites = ['index.php', 'categories.php', 'orders.php', 'users.php'];
+          if (in_array($page, $sites)) { ?>
+            <form method="post" <?php foreach ($sites as $site) {
+                                  if ($page == $site) {
+                                    echo "action='$site'";
+                                  }
+                                } ?>>
               <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
               <div class="d-flex">
                 <input type="search" name="search" class="form-control mr-2" id="" placeholder="Search">
@@ -109,7 +115,43 @@
                 </p>
               </a>
             </li>
-          </ul>
+            <?php 
+                $dropdownActive = array('weekly_report.php','monthly_report.php','royal_customer.php','best_seller.php');
+              ?>
+            <li class="nav-item has-treeview menu ">
+              <a href="#" class="nav-link <?php if(in_array($page,$dropdownActive)){echo "active";} ?>">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                  Reports
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="weekly_report.php" class="nav-link <?php echo $page == 'weekly_report.php' ? 'active' : '' ?>">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Weekly Report</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="monthly_report.php" class="nav-link <?php echo $page == 'monthly_report.php' ? 'active' : '' ?>">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Monthly Report</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="royal_customer.php" class="nav-link <?php echo $page == 'royal_customer.php' ? 'active' : '' ?>">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Royal Customers</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="best_seller.php" class="nav-link <?php echo $page == 'best_seller.php' ? 'active' : '' ?>">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Best Seller Items</p>
+                  </a>
+                </li>
+              </ul>
         </nav>
         <!-- /.sidebar-menu -->
       </div>
